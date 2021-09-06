@@ -286,19 +286,15 @@
         "named": true
       },
       {
-        "type": "object_expression",
-        "named": true
-      },
-      {
-        "type": "prefix_expression",
-        "named": true
-      },
-      {
         "type": "product_expression",
         "named": true
       },
       {
         "type": "set_expression",
+        "named": true
+      },
+      {
+        "type": "sign_expression",
         "named": true
       },
       {
@@ -582,7 +578,7 @@
         "named": true
       },
       {
-        "type": "infix_expression",
+        "type": "hash_expression",
         "named": true
       },
       {
@@ -603,6 +599,10 @@
       },
       {
         "type": "object_copy_expression",
+        "named": true
+      },
+      {
+        "type": "object_expression",
         "named": true
       },
       {
@@ -1743,22 +1743,7 @@
   {
     "type": "constructor_declaration",
     "named": true,
-    "fields": {
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_extension",
-            "named": true
-          },
-          {
-            "type": "_simple_type",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": true,
@@ -2011,11 +1996,7 @@
       "required": true,
       "types": [
         {
-          "type": "_extension",
-          "named": true
-        },
-        {
-          "type": "_type",
+          "type": "_polymorphic_type",
           "named": true
         },
         {
@@ -2412,6 +2393,50 @@
         },
         {
           "type": "_sequence_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "hash_expression",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_extension",
+            "named": true
+          },
+          {
+            "type": "_simple_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_extension",
+            "named": true
+          },
+          {
+            "type": "_simple_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "hash_operator",
           "named": true
         }
       ]
@@ -2854,6 +2879,10 @@
         },
         {
           "type": "_simple_expression",
+          "named": true
+        },
+        {
+          "type": "_type",
           "named": true
         },
         {
@@ -4160,6 +4189,10 @@
           "named": true
         },
         {
+          "type": "hash_operator",
+          "named": true
+        },
+        {
           "type": "indexing_operator",
           "named": true
         },
@@ -4294,11 +4327,11 @@
         "required": true,
         "types": [
           {
-            "type": "_expression",
+            "type": "_extension",
             "named": true
           },
           {
-            "type": "_extension",
+            "type": "_simple_expression",
             "named": true
           }
         ]
@@ -4314,11 +4347,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "prefix_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "product_expression",
@@ -4607,6 +4635,41 @@
         }
       ]
     }
+  },
+  {
+    "type": "sign_expression",
+    "named": true,
+    "fields": {
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "_extension",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "sign_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "sign_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "signature",
@@ -5284,11 +5347,7 @@
       "required": true,
       "types": [
         {
-          "type": "_extension",
-          "named": true
-        },
-        {
-          "type": "_type",
+          "type": "_polymorphic_type",
           "named": true
         },
         {
@@ -5644,6 +5703,10 @@
     "named": false
   },
   {
+    "type": "hash_operator",
+    "named": true
+  },
+  {
     "type": "if",
     "named": false
   },
@@ -5774,6 +5837,10 @@
   {
     "type": "or",
     "named": false
+  },
+  {
+    "type": "prefix_operator",
+    "named": true
   },
   {
     "type": "pretty_printing_indication",

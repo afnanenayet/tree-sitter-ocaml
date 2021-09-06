@@ -211,7 +211,7 @@ module.exports = grammar({
       'external',
       optional($._attribute),
       $._value_name,
-      $._typed,
+      $._polymorphic_typed,
       '=',
       repeat1($.string),
       repeat($.item_attribute)
@@ -281,8 +281,12 @@ module.exports = grammar({
       ),
       optional(choice(
         seq('of', $._constructor_argument),
-        $._simple_typed,
-        seq(':', $._constructor_argument, '->', field('type', $._simple_type_ext)),
+        seq(
+          ':',
+          optional(seq(repeat1($.type_variable), '.')),
+          optional(seq($._constructor_argument, '->')),
+          $._simple_type_ext
+        ),
         seq('=', $.constructor_path)
       ))
     ),
@@ -328,7 +332,7 @@ module.exports = grammar({
       field('name', choice($._module_name, alias('_', $.module_name))),
       repeat($.module_parameter),
       optional($._module_typed),
-      optional(seq('=', field('body', $._module_expression_ext))),
+      optional(seq(choice('=', ':='), field('body', $._module_expression_ext))),
       repeat($.item_attribute)
     ),
 
@@ -422,7 +426,7 @@ module.exports = grammar({
       'val',
       optional($._attribute),
       $._value_name,
-      $._typed,
+      $._polymorphic_typed,
       repeat($.item_attribute)
     ),
 
@@ -953,7 +957,7 @@ module.exports = grammar({
       $.array_expression,
       $.record_expression,
       $.prefix_expression,
-      alias($.hash_expression, $.infix_expression),
+      $.hash_expression,
       $.field_get_expression,
       $.array_get_expression,
       $.string_get_expression,
@@ -964,6 +968,7 @@ module.exports = grammar({
       $.new_expression,
       $.object_copy_expression,
       $.method_invocation,
+      $.object_expression,
       $.parenthesized_expression,
       $.ocamlyacc_value
     ),
@@ -979,7 +984,7 @@ module.exports = grammar({
       $.cons_expression,
       $.application_expression,
       $.infix_expression,
-      alias($.sign_expression, $.prefix_expression),
+      $.sign_expression,
       $.set_expression,
       $.if_expression,
       $.while_expression,
@@ -993,8 +998,7 @@ module.exports = grammar({
       $.lazy_expression,
       $.let_module_expression,
       $.let_open_expression,
-      $.let_exception_expression,
-      $.object_expression
+      $.let_exception_expression
     ),
 
     _expression_ext: $ => choice(
@@ -1077,7 +1081,14 @@ module.exports = grammar({
         $._label,
         token.immediate(':'),
         $._simple_expression_ext
-      )
+      ),
+      seq(
+        choice('~', '?'),
+        '(',
+        $._label_name,
+        $._typed,
+        ')'
+      ),
     ),
 
     prefix_expression: $ => prec(PREC.prefix, seq(
@@ -1086,13 +1097,13 @@ module.exports = grammar({
     )),
 
     sign_expression: $ => prec(PREC.neg, seq(
-      alias($._sign_operator, $.prefix_operator),
+      $.sign_operator,
       field('right', $._expression_ext)
     )),
 
     hash_expression: $ => prec.left(PREC.hash, seq(
       field('left', $._simple_expression_ext),
-      alias($._hash_operator, $.infix_operator),
+      $.hash_operator,
       field('right', $._simple_expression_ext)
     )),
 
@@ -1871,10 +1882,9 @@ module.exports = grammar({
       seq(/[~?]/, repeat1(HASH_OP_CHAR))
     )),
 
-    _sign_operator: $ => choice('+', '-', '+.', '-.'),
+    sign_operator: $ => choice('+', '-', '+.', '-.'),
 
     infix_operator: $ => choice(
-      $._hash_operator,
       $._pow_operator,
       $._mult_operator,
       $._add_operator,
@@ -1885,7 +1895,7 @@ module.exports = grammar({
       $._assign_operator
     ),
 
-    _hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
+    hash_operator: $ => token(seq('#', repeat1(HASH_OP_CHAR))),
 
     _pow_operator: $ => choice(
       token(seq('**', repeat(OP_CHAR))),
@@ -1897,10 +1907,13 @@ module.exports = grammar({
       'mod', 'land', 'lor', 'lxor'
     ),
 
-    _add_operator: $ => token(choice(
-      seq('+', repeat(OP_CHAR)),
-      seq('-', choice(optional(/[!$%&*+\-./:<=?@^|~]/), repeat2(OP_CHAR))),
-    )),
+    _add_operator: $ => choice(
+      '+', '-', '+.', '-.',
+      token(choice(
+        seq('+', repeat1(OP_CHAR)),
+        seq('-', choice(repeat1(/[!$%&*+\-./:<=?@^|~]/), repeat2(OP_CHAR)))
+      ))
+    ),
 
     _concat_operator: $ => token(
       seq(/[@^]/, repeat(OP_CHAR))
@@ -1952,8 +1965,8 @@ module.exports = grammar({
 
     parenthesized_operator: $ => parenthesize(choice(
       $.prefix_operator,
-      alias($._sign_operator, $.infix_operator),
       $.infix_operator,
+      $.hash_operator,
       seq(
         '.',
         $.indexing_operator,
