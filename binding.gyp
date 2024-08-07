@@ -6,7 +6,7 @@
         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
       ],
       "include_dirs": [
-        "include"
+        "grammars/ocaml/src",
       ],
       "sources": [
         "bindings/node/binding.cc",
@@ -17,9 +17,18 @@
         "grammars/type/src/parser.c",
         "grammars/type/src/scanner.c",
       ],
-      "cflags_c": [
-        "-std=c11",
-      ]
+      "conditions": [
+        ["OS!='win'", {
+          "cflags_c": [
+            "-std=c11",
+          ],
+        }, { # OS == "win"
+          "cflags_c": [
+            "/std:c11",
+            "/utf-8",
+          ],
+        }],
+      ],
     },
   ]
 }

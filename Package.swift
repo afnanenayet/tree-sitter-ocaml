@@ -3,16 +3,16 @@ import PackageDescription
 
 let package = Package(
     name: "TreeSitterOCaml",
-    platforms: [.macOS(.v10_13), .iOS(.v11)],
     products: [
         .library(name: "TreeSitterOCaml", targets: ["TreeSitterOCaml"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.7.1"),
+        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.8.0"),
     ],
     targets: [
         .target(
             name: "TreeSitterOCaml",
+            dependencies: [],
             path: ".",
             sources: [
                 "grammars/ocaml/src/parser.c",
@@ -21,13 +21,12 @@ let package = Package(
                 "grammars/interface/src/scanner.c",
                 "grammars/type/src/parser.c",
                 "grammars/type/src/scanner.c",
-                "include",
             ],
             resources: [
                 .copy("queries")
             ],
             publicHeadersPath: "bindings/swift",
-            cSettings: [.headerSearchPath("include")]
+            cSettings: [.headerSearchPath("grammars/ocaml/src")]
         ),
         .testTarget(
             name: "TreeSitterOCamlTests",
