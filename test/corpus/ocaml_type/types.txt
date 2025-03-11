@@ -1,6 +1,5 @@
 ===========================
 Type variable
-
 :language(ocaml_type)
 ===========================
 
@@ -13,7 +12,6 @@ Type variable
 
 ===========================
 Constructed type
-
 :language(ocaml_type)
 ===========================
 
@@ -40,7 +38,6 @@ M(M).t M.t t
 
 ===========================
 Polymorphic variant type
-
 :language(ocaml_type)
 ===========================
 
@@ -59,7 +56,6 @@ Polymorphic variant type
 
 ===========================
 Package types
-
 :language(ocaml_type)
 ===========================
 
@@ -74,7 +70,6 @@ Package types
 
 ===========================
 Function type
-
 :language(ocaml_type)
 ===========================
 
@@ -84,24 +79,23 @@ l:t -> ?l:t -> t -> t
 
 (type
   (function_type
-    (typed_label
+    domain: (labeled_argument_type
       (label_name)
-      (type_constructor_path
+      type: (type_constructor_path
         (type_constructor)))
-    (function_type
-      (typed_label
+    codomain: (function_type
+      domain: (labeled_argument_type
         (label_name)
-        (type_constructor_path
+        type: (type_constructor_path
           (type_constructor)))
-      (function_type
-        (type_constructor_path
+      codomain: (function_type
+        domain: (type_constructor_path
           (type_constructor))
-        (type_constructor_path
+        codomain: (type_constructor_path
           (type_constructor))))))
 
 ===========================
 Tuple type
-
 :language(ocaml_type)
 ===========================
 
@@ -111,17 +105,15 @@ t * t * t
 
 (type
   (tuple_type
-    (tuple_type
-      (type_constructor_path
-        (type_constructor))
-      (type_constructor_path
-        (type_constructor)))
+    (type_constructor_path
+      (type_constructor))
+    (type_constructor_path
+      (type_constructor))
     (type_constructor_path
       (type_constructor))))
 
 ===========================
 Aliased type
-
 :language(ocaml_type)
 ===========================
 
@@ -131,13 +123,12 @@ t as 't
 
 (type
   (aliased_type
-    (type_constructor_path
+    type: (type_constructor_path
       (type_constructor))
-    (type_variable)))
+    alias: (type_variable)))
 
 ===========================
 Parenthesized type
-
 :language(ocaml_type)
 ===========================
 

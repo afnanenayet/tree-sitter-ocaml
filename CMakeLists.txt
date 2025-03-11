@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-ocaml
-        VERSION "0.23.2"
+        VERSION "0.24.0"
 		DESCRIPTION "OCaml grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/tree-sitter/tree-sitter-ocaml"
         LANGUAGES C)
@@ -30,7 +30,10 @@ macro(add_parser name)
     add_library(tree-sitter-${name}
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/parser.c"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/scanner.c")
-    target_include_directories(tree-sitter-${name} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_include_directories(tree-sitter-${name}
+                               PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+                               INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/bindings/c>
+                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>))
 
     target_compile_definitions(tree-sitter-${name} PRIVATE
                                $<$<BOOL:${TREE_SITTER_REUSE_ALLOCATOR}>:TREE_SITTER_REUSE_ALLOCATOR>
@@ -46,8 +49,9 @@ macro(add_parser name)
     configure_file("${CMAKE_SOURCE_DIR}/bindings/c/tree-sitter-${name}.pc.in"
                    "${CMAKE_CURRENT_BINARY_DIR}/tree-sitter-${name}.pc" @ONLY)
 
-    install(FILES "${CMAKE_SOURCE_DIR}/bindings/c/tree-sitter-${name}.h"
-            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/tree_sitter")
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/bindings/c/tree_sitter"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+            FILES_MATCHING PATTERN "*.h")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tree-sitter-${name}.pc"
             DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig")
     install(TARGETS tree-sitter-${name}

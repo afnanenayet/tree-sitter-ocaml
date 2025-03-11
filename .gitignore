@@ -25,9 +25,8 @@ dist/
 *.dylib
 *.dll
 *.pc
-
-# Example dirs
-/examples/*/
+*.exp
+*.lib
 
 # Grammar volatiles
 *.wasm
@@ -38,3 +37,7 @@ dist/
 *.tar.gz
 *.tgz
 *.zip
+
+# Test files
+/test.ml
+/test.mli
